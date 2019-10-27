@@ -1,4 +1,16 @@
 #include <Audio.h>
+#include "arduinoFFT.h"
+
+#define SAMPLES 512
+#define SAMPLINGFREQ 48000
+
+arduinoFFT FFT = arduinoFFT();
+
+double vReal[SAMPLES];
+double vImag[SAMPLES];
+int counte=0;
+
+double mic_a;
 
 AudioClass *theAudio;
 
@@ -53,6 +65,8 @@ void setup()
 
   puts("Rec!");
   theAudio->startRecorder();
+
+  Serial.begin(115200);
 }
 
 /**
@@ -66,6 +80,7 @@ void signal_process(uint32_t size)
 
   //printf("started!");
 
+  //構造体を定義してバッファの内容をキャスト
   // https://ja.stackoverflow.com/questions/55107/spresense-arduino-%E3%81%AE%E3%82%B9%E3%82%B1%E3%83%83%E3%83%81%E4%BE%8B-pcm-capture%E3%81%AE%E9%9F%B3%E5%A3%B0%E3%83%87%E3%83%BC%E3%82%BF%E6%A7%8B%E9%80%A0%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
   struct channel_bit16
   {    
@@ -73,9 +88,9 @@ void signal_process(uint32_t size)
   };
 
   struct channel_bit16 *mic_data = (struct channel_bit16 *) s_buffer; // 0番目のデータにアクセス
-  uint16_t mic_a = mic_data[0].micA; //uint16_t mic_b = mic_data[0].micB;//uint16_t mic_c = mic_data[0].micC;//uint16_t mic_d = mic_data[0].micD;
+  mic_a = mic_data[0].micA; //uint16_t mic_b = mic_data[0].micB;//uint16_t mic_c = mic_data[0].micC;//uint16_t mic_d = mic_data[0].micD;
 
-  printf("%04x\n",mic_a);
+
   /*
   printf("%02x %02x %02x %02x %02x %02x %02x %02x \n",
          s_buffer[0],
@@ -143,7 +158,25 @@ void loop() {
     {
       total_size += read_size;
     }
-
+  vReal[counte] = mic_a;
+  counte++;
+ // if(counte>=768)
+ //   counte = 0;
+  Serial.print(mic_a);
+  Serial.print("  ");
+  Serial.print(counte);
+  Serial.print("  ");
+  Serial.println(vReal[counte]);
+//  printf(" %d %lf\n",counte,vReal[counte]);
+/*
+  if(counte=767)
+  {
+    for(int i=0;i<767;i++)
+    {
+      printf("%x\n",vReal[i]);
+    }
+  }
+*/
   /* This sleep is adjusted by the time to write the audio stream file.
      Please adjust in according with the processing contents
      being processed at the same time by Application.
