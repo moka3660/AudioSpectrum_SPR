@@ -1,7 +1,7 @@
 #include <Audio.h>
 #include "arduinoFFT.h"
 
-#define SAMPLES 512
+#define SAMPLES 256
 #define SAMPLINGFREQ 48000
 
 arduinoFFT FFT = arduinoFFT();
@@ -15,7 +15,7 @@ double mic_a;
 AudioClass *theAudio;
 
 static const int32_t recoding_frames = 400;
-static const int32_t buffer_size = 1536;/* 1ch */ /*768sample,4ch,16bit -> 6144*/
+static const int32_t buffer_size = 1024;/* 1ch */ /*768sample,4ch,16bit -> 6144*/
 static char          s_buffer[buffer_size];
 static int16_t buff[buffer_size]; //^-^
 
@@ -127,6 +127,13 @@ err_t execute_aframe(uint32_t* size)
   return err;
 }
 
+/*FFT
+void fft()
+{
+
+}
+
+
 /**
  * @brief Capture frames of PCM data into buffer
  */
@@ -149,11 +156,24 @@ void loop() {
   /* ここやで */
   vReal[counte] = mic_a;
   counte++;
+/*
   Serial.print(mic_a);
   Serial.print("  ");
   Serial.print(counte);
   Serial.print("  ");
   Serial.println(vReal[counte]);
+*/
+ // if(counte>=SAMPLES)
+ // {
+  //  Serial.println("Yes!");
+  
+  FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
+  FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
+  double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLINGFREQ);
+  Serial.println(peak);
+  delay(10);
+ // }
 
   /* This sleep is adjusted by the time to write the audio stream file.
      Please adjust in according with the processing contents
