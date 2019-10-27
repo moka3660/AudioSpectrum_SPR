@@ -89,19 +89,7 @@ void signal_process(uint32_t size)
 
   struct channel_bit16 *mic_data = (struct channel_bit16 *) s_buffer; // 0番目のデータにアクセス
   mic_a = mic_data[0].micA; //uint16_t mic_b = mic_data[0].micB;//uint16_t mic_c = mic_data[0].micC;//uint16_t mic_d = mic_data[0].micD;
-
-
-  /*
-  printf("%02x %02x %02x %02x %02x %02x %02x %02x \n",
-         s_buffer[0],
-         s_buffer[1],
-         s_buffer[2],
-         s_buffer[3],
-         s_buffer[4],
-         s_buffer[5],
-         s_buffer[6],
-         s_buffer[7]);
-  */       
+    
 }
 
 /**
@@ -158,25 +146,15 @@ void loop() {
     {
       total_size += read_size;
     }
+  /* ここやで */
   vReal[counte] = mic_a;
   counte++;
- // if(counte>=768)
- //   counte = 0;
   Serial.print(mic_a);
   Serial.print("  ");
   Serial.print(counte);
   Serial.print("  ");
   Serial.println(vReal[counte]);
-//  printf(" %d %lf\n",counte,vReal[counte]);
-/*
-  if(counte=767)
-  {
-    for(int i=0;i<767;i++)
-    {
-      printf("%x\n",vReal[i]);
-    }
-  }
-*/
+
   /* This sleep is adjusted by the time to write the audio stream file.
      Please adjust in according with the processing contents
      being processed at the same time by Application.
