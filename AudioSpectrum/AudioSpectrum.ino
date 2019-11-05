@@ -1,9 +1,21 @@
 #include <Audio.h>
+#include "arduinoFFT.h"
+
+#define SAMPLES 256
+#define SAMPLINGFREQ 48000
+
+arduinoFFT FFT = arduinoFFT();
+
+double vReal[SAMPLES];
+double vImag[SAMPLES];
+int counte=0;
+
+double mic_a;
 
 AudioClass *theAudio;
 
 static const int32_t recoding_frames = 400;
-static const int32_t buffer_size = 1536;/* 1ch */ /*768sample,4ch,16bit -> 6144*/
+static const int32_t buffer_size = 1024;/* 1ch */ /*768sample,4ch,16bit -> 6144*/
 static char          s_buffer[buffer_size];
 static int16_t buff[buffer_size]; //^-^
 
@@ -53,6 +65,8 @@ void setup()
 
   puts("Rec!");
   theAudio->startRecorder();
+
+  Serial.begin(115200);
 }
 
 /**
@@ -66,6 +80,7 @@ void signal_process(uint32_t size)
 
   //printf("started!");
 
+  //構造体を定義してバッファの内容をキャスト
   // https://ja.stackoverflow.com/questions/55107/spresense-arduino-%E3%81%AE%E3%82%B9%E3%82%B1%E3%83%83%E3%83%81%E4%BE%8B-pcm-capture%E3%81%AE%E9%9F%B3%E5%A3%B0%E3%83%87%E3%83%BC%E3%82%BF%E6%A7%8B%E9%80%A0%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
   struct channel_bit16
   {    
@@ -73,20 +88,8 @@ void signal_process(uint32_t size)
   };
 
   struct channel_bit16 *mic_data = (struct channel_bit16 *) s_buffer; // 0番目のデータにアクセス
-  uint16_t mic_a = mic_data[0].micA; //uint16_t mic_b = mic_data[0].micB;//uint16_t mic_c = mic_data[0].micC;//uint16_t mic_d = mic_data[0].micD;
-
-  printf("%04x\n",mic_a);
-  /*
-  printf("%02x %02x %02x %02x %02x %02x %02x %02x \n",
-         s_buffer[0],
-         s_buffer[1],
-         s_buffer[2],
-         s_buffer[3],
-         s_buffer[4],
-         s_buffer[5],
-         s_buffer[6],
-         s_buffer[7]);
-  */       
+  mic_a = mic_data[0].micA; //uint16_t mic_b = mic_data[0].micB;//uint16_t mic_c = mic_data[0].micC;//uint16_t mic_d = mic_data[0].micD;
+    
 }
 
 /**
@@ -124,6 +127,13 @@ err_t execute_aframe(uint32_t* size)
   return err;
 }
 
+/*FFT
+void fft()
+{
+
+}
+
+
 /**
  * @brief Capture frames of PCM data into buffer
  */
@@ -143,6 +153,27 @@ void loop() {
     {
       total_size += read_size;
     }
+  /* ここやで */
+  vReal[counte] = mic_a;
+  counte++;
+/*
+  Serial.print(mic_a);
+  Serial.print("  ");
+  Serial.print(counte);
+  Serial.print("  ");
+  Serial.println(vReal[counte]);
+*/
+ // if(counte>=SAMPLES)
+ // {
+  //  Serial.println("Yes!");
+  
+  FFT.Windowing(vReal, SAMPLES, FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+  FFT.Compute(vReal, vImag, SAMPLES, FFT_FORWARD);
+  FFT.ComplexToMagnitude(vReal, vImag, SAMPLES);
+  double peak = FFT.MajorPeak(vReal, SAMPLES, SAMPLINGFREQ);
+  Serial.println(peak);
+  delay(10);
+ // }
 
   /* This sleep is adjusted by the time to write the audio stream file.
      Please adjust in according with the processing contents
