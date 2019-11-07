@@ -40,7 +40,8 @@
 #define FFTLEN 1024
 //#define FFTLEN 2048
 //#define FFTLEN 4096
-#define LEDLEN 10
+#define LEDLEN 10   //LED横幅
+#define DEVI 10 //strengthを高さ10(LEDの縦の数)にそろえるための割る数
 
 const int g_channel = 4;
 //const int led_culumn = 10;//number of led culumn
@@ -120,7 +121,9 @@ void fft_processing(int chnum)
     fft(pSrc, pDst, FFTLEN);
 
     /* Peak */
-  //  peakFs[i] = get_peak_frequency(pDst, FFTLEN);
+    //  peakFs[i] = get_peak_frequency(pDst, FFTLEN);
+
+    /* Spectrum */
     get_spectrum(pDst,FFTLEN,LEDLEN);
   }
 
