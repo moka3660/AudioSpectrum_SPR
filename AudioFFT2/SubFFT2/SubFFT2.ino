@@ -41,10 +41,13 @@
 //#define FFTLEN 2048
 //#define FFTLEN 4096
 #define LEDLEN 10   //LED横幅
-#define DEVI 10 //strengthを高さ10(LEDの縦の数)にそろえるための割る数
+#define DEVI 1000 //strengthを高さ10(LEDの縦の数)にそろえるための割る数
 
 const int g_channel = 4;
 //const int led_culumn = 10;//number of led culumn
+byte data[LEDLEN];
+byte send[LEDLEN];
+
 
 /* Ring buffer */
 
@@ -179,9 +182,33 @@ void get_spectrum(float *pData, int fftLen, int ledLen)
     strength[i] = sumarr[i] / SUMLEN;
   }
 
-  printf(" %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f\n",
+ /* printf(" %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f\n",
          strength[0], strength[1], strength[2], strength[3],strength[4], strength[5], strength[6], strength[7],strength[8], strength[9]);
+*/
+ // data[LEDLEN]=255;
+  for (int i = 0; i < LEDLEN; i++)
+  {
+    /* code */
+    data[i] = (strength[i]*1000)/DEVI;
+    if (data[i]>10)
+    {
+      data[i]=10;
+    }
+    send[i] = 0;
+    send[i] = i << 4;
+    send[i] |= data[i];
+  }
 
+
+  for (int i = 0; i < LEDLEN; i++)
+  {
+    /* code */
+    printf(" %d ",send[i]);
+    printf(" %d ",send[i]&0b11110000);
+    printf("%d ",data[i]);
+  }
+  printf("\n");
+  
 
 }
 
