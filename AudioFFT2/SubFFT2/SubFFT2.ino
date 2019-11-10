@@ -83,6 +83,7 @@ void setup()
   }
   /* receive with non-blocking */
   MP.RecvTimeout(MP_RECV_POLLING);
+  Serial2.begin(115200);
 }
 
 void loop()
@@ -198,7 +199,7 @@ void get_spectrum(float *pData, int fftLen, int ledLen)
     send[i] = i << 4;
     send[i] |= data[i];
   }
-
+  Serial2.write(send,10);
 /*
   for (int i = 0; i < LEDLEN; i++)
   {
