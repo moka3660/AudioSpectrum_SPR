@@ -74,6 +74,14 @@ struct Capture {
 
 void setup()
 {
+  pinMode(0,OUTPUT);
+  digitalWrite(0,LOW);
+  for (int i = 14; i < 29; i++)
+  {
+    pinMode(i,OUTPUT);
+    digitalWrite(i,LOW);
+  }
+  
   int ret = 0;
 
   /* Initialize MP library */
