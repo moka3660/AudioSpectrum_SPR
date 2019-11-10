@@ -47,6 +47,7 @@ const int g_channel = 4;
 //const int led_culumn = 10;//number of led culumn
 byte data[LEDLEN];
 byte send[LEDLEN];
+int ii = 0;
 
 
 /* Ring buffer */
@@ -117,36 +118,7 @@ void loop()
   while (ringbuf[0].stored() >= FFTLEN) {
     fft_processing(capture->chnum);
   }
- // printf("=======================--------------------------------------------------\n");
-  // 暫定処理
-  for (int i = 0; i < 8; i++)
-  {
-    //消す
-    digitalWrite(0,LOW);
-    for (int i = 14; i < 29; i++)
-    {
-      digitalWrite(i,LOW);
-    }
-    //よこ
-    if (i==7)
-    {
-      digitalWrite(0,HIGH);
-    }else
-    {
-      digitalWrite(i+22,HIGH);
-    }
-    //たて
-    if (data[i]>8)
-    {
-      data[i]=8;
-    }
-    for (int j = 0; j < data[i]; j++)
-    {
-      digitalWrite(j+14,HIGH);
-    }
-  }
-  
-  delay(5);
+ 
 }
 
 void fft_processing(int chnum)
@@ -239,14 +211,14 @@ void get_spectrum(float *pData, int fftLen, int ledLen)
   }
 
 
-  for (int i = 0; i < LEDLEN; i++)
+ /* for (int i = 0; i < LEDLEN; i++)
   { 
     printf(" %d ",send[i]);
     printf(" %d ",send[i]&0b11110000);
     printf("%d ",data[i]);
   }
   printf("\n");
-
+*/
 
 }
 
@@ -286,5 +258,40 @@ void errorLoop(int num)
 
 unsigned int brink()
 {
-  return 0;
+  // printf("=======================--------------------------------------------------\n");
+  // 暫定処理
+//  for (int i = 0; i < 8; i++)
+//  {
+    //消す
+    digitalWrite(0,LOW);
+    for (int i = 14; i < 29; i++)
+    {
+      digitalWrite(i,LOW);
+    }
+    //よこ
+    if (ii==7)
+    {
+      digitalWrite(0,HIGH);
+    }else
+    {
+      digitalWrite(ii+22,HIGH);
+    }
+    //たて
+    if (data[ii]>8)
+    {
+      data[ii]=8;
+    }
+    for (int j = 0; j < data[ii]; j++)
+    {
+      digitalWrite(j+14,HIGH);
+    }
+    ii++;
+    if (ii>=8)
+    {
+      ii = 0;
+    }
+    
+ // }
+  //delay(5);
+  return 1000;
 }
