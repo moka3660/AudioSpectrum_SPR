@@ -199,16 +199,16 @@ void get_spectrum(float *pData, int fftLen, int ledLen)
     send[i] |= data[i];
   }
 
-
+/*
   for (int i = 0; i < LEDLEN; i++)
   {
-    /* code */
+    /* code 
     printf(" %d ",send[i]);
     printf(" %d ",send[i]&0b11110000);
     printf("%d ",data[i]);
   }
   printf("\n");
-  
+*/
 
 }
 
