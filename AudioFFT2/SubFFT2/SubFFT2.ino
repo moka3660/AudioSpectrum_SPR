@@ -91,6 +91,7 @@ void setup()
   }
   /* receive with non-blocking */
   MP.RecvTimeout(MP_RECV_POLLING);
+  attachTimerInterrupt(brink,10000);
 }
 
 void loop()
@@ -116,6 +117,36 @@ void loop()
   while (ringbuf[0].stored() >= FFTLEN) {
     fft_processing(capture->chnum);
   }
+ // printf("=======================--------------------------------------------------\n");
+  // 暫定処理
+  for (int i = 0; i < 8; i++)
+  {
+    //消す
+    digitalWrite(0,LOW);
+    for (int i = 14; i < 29; i++)
+    {
+      digitalWrite(i,LOW);
+    }
+    //よこ
+    if (i==7)
+    {
+      digitalWrite(0,HIGH);
+    }else
+    {
+      digitalWrite(i+22,HIGH);
+    }
+    //たて
+    if (data[i]>8)
+    {
+      data[i]=8;
+    }
+    for (int j = 0; j < data[i]; j++)
+    {
+      digitalWrite(j+14,HIGH);
+    }
+  }
+  
+  delay(5);
 }
 
 void fft_processing(int chnum)
@@ -207,16 +238,15 @@ void get_spectrum(float *pData, int fftLen, int ledLen)
     send[i] |= data[i];
   }
 
-/*
+
   for (int i = 0; i < LEDLEN; i++)
-  {
-    /* code 
+  { 
     printf(" %d ",send[i]);
     printf(" %d ",send[i]&0b11110000);
     printf("%d ",data[i]);
   }
   printf("\n");
-*/
+
 
 }
 
@@ -252,4 +282,9 @@ void errorLoop(int num)
     }
     delay(1000);
   }
+}
+
+unsigned int brink()
+{
+  return 0;
 }
