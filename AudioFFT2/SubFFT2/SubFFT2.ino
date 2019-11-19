@@ -45,6 +45,7 @@
 
 const int g_channel = 4;
 //const int led_culumn = 10;//number of led culumn
+const int interval = 10000; // [us]
 byte data[LEDLEN];
 byte send[LEDLEN];
 
@@ -72,6 +73,15 @@ struct Capture {
   int  chnum;
 };
 
+boolean flag = false;
+unsigned int dataSent()
+{
+  flag = true;
+  return interval;
+}
+
+
+
 void setup()
 {
   int ret = 0;
@@ -84,6 +94,7 @@ void setup()
   /* receive with non-blocking */
   MP.RecvTimeout(MP_RECV_POLLING);
   Serial2.begin(115200);
+  attachTimerInterrupt(dataSent,interval);//タイマ割込み
 }
 
 void loop()
@@ -108,6 +119,12 @@ void loop()
 
   while (ringbuf[0].stored() >= FFTLEN) {
     fft_processing(capture->chnum);
+  }
+
+  if(flag)
+  {
+    Serial2.write(send,10);
+    flag = false;
   }
 }
 
@@ -199,7 +216,7 @@ void get_spectrum(float *pData, int fftLen, int ledLen)
     send[i] = i << 4;
     send[i] |= data[i];
   }
-  Serial2.write(send,10);
+//  Serial2.write(send,10);
 /*
   for (int i = 0; i < LEDLEN; i++)
   {

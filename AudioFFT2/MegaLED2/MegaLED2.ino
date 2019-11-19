@@ -21,7 +21,7 @@ void loop()
         {
             incomingByte = Serial1.read();
        		Serial.print(incomingByte, DEC);
-            Serial.print(",")
+            Serial.print(",");
         }
         Serial.println();        
     }
