@@ -5,11 +5,16 @@
 
 */
 byte incomingByte = 0;	// 受信データ用
+byte data[10];  //処理用データ
 void setup()
 {
     Serial.begin(115200);
     Serial1.begin(115200);
     pinMode(8,OUTPUT);
+    for (int i = 0; i < 10; i++)
+    {
+        data[i] = 0;
+    }
 }
 
 void loop()
@@ -20,9 +25,17 @@ void loop()
         for (int i = 0; i != 10; i++)
         {
             incomingByte = Serial1.read();
-       		Serial.print(incomingByte, DEC);
-            Serial.print(",");
+            data[i] = incomingByte;
+       	    //	Serial.print(incomingByte, DEC);
+            //    Serial.print(",");
         }
-        Serial.println();        
+        //    Serial.println();        
     }
+    //光らせる
+    for (int i = 0; i < 10; i++)
+    {
+        /* code */
+        data[i] &= 0b00001111;  //座標を消す
+    }
+    
 }
