@@ -30,6 +30,19 @@ void setup()
     {
         data[i] = 0;
     }
+    //消す
+    //横
+    for (int i = 0; i < 20; i++)
+    {
+        digitalWrite(lowside[i],LOW);
+    }
+    //縦
+    for (int i = 0; i < 10; i++)
+    {
+        digitalWrite(highside[i],LOW);
+    }
+    
+    
 }
 
 void loop()
@@ -52,5 +65,19 @@ void loop()
         /* code */
         data[i] &= 0b00001111;  //座標を消す
     }
-    
+    for (int i = 0; i < 20; i++)
+    {
+        digitalWrite(lowside[i],HIGH);
+        for (int j = 0; j < data[i]; j++)
+        {
+            digitalWrite(highside[j],HIGH);
+        }
+        delay(1);
+        //けす
+        digitalWrite(lowside[i],LOW);
+        for (int j = 0; j < 10; j++)
+        {
+            digitalWrite(highside[j],LOW);
+        }
+    }
 }
