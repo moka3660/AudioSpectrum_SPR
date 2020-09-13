@@ -40,7 +40,7 @@
 #define FFTLEN 1024
 //#define FFTLEN 2048
 //#define FFTLEN 4096
-#define LEDLEN 10   //LED横幅
+#define LEDLEN 20   //LED横幅
 #define DEVI 1000 //strengthを高さ10(LEDの縦の数)にそろえるための割る数
 
 const int g_channel = 4;
